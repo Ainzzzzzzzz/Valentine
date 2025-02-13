@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slowly Drawing Flower</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffcccc; /* Soft pink for a Valentine's theme */
+        }
+        canvas {
+            background: white;
+            border-radius: 10px;
+        }
+        #message {
+            display: none;
+            margin-top: 20px;
+            font-size: 24px;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="flowerCanvas" width="400" height="400"></canvas>
+    <div id="message">Happy Valentines Day!</div>
+    <script>
+        const canvas = document.getElementById("flowerCanvas");
+        const ctx = canvas.getContext("2d");
+        let petalsDrawn = 0;
+        const totalPetals = 10;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 60;
+
+        function drawBranch() {
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY + 10);
+            ctx.lineTo(centerX, centerY + 100);
+            ctx.strokeStyle = "brown";
+            ctx.lineWidth = 4;
+            ctx.stroke();
+        }
+
+        function drawPetal(angle) {
+            ctx.beginPath();
+            const x1 = centerX + Math.cos(angle) * radius;
+            const y1 = centerY + Math.sin(angle) * radius;
+            const x2 = centerX + Math.cos(angle + Math.PI / totalPetals) * radius;
+            const y2 = centerY + Math.sin(angle + Math.PI / totalPetals) * radius;
+
+            ctx.moveTo(centerX, centerY);
+            ctx.quadraticCurveTo(x1, y1, x2, y2);
+            ctx.quadraticCurveTo(centerX, centerY, centerX, centerY);
+            ctx.fillStyle = "pink";
+            ctx.fill();
+            ctx.strokeStyle = "red";
+            ctx.stroke();
+        }
+
+        function drawFlower() {
+            if (petalsDrawn === 0) {
+                drawBranch(); // Draw branch first
+            }
+            if (petalsDrawn < totalPetals) {
+                const angle = (petalsDrawn * (2 * Math.PI)) / totalPetals;
+                drawPetal(angle);
+                petalsDrawn++;
+                setTimeout(drawFlower, 500); 
+            } else {
+                drawCenter();
+            }
+        }
+
+        function drawCenter() {
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
+            ctx.fillStyle = "yellow";
+            ctx.fill();
+            ctx.strokeStyle = "orange";
+            ctx.stroke();
+            setTimeout(showMessage, 500);
+        }
+
+        function showMessage() {
+            document.getElementById("message").style.display = "block";
+        }
+
+        drawFlower();
+    </script>
+</body>
+</html>
